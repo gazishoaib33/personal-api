@@ -5,6 +5,7 @@ from typing import List, Optional
 from database import get_db
 from models import Expense
 from schemas import ExpenseCreate, ExpenseOut
+from auth import require_api_key
 
 router = APIRouter(prefix="/expenses", tags=["Expenses"])
 
@@ -55,7 +56,8 @@ def get_one_expense(expense_id: int, db: Session = Depends(get_db)):
     return expense
 
 
-@router.post("/", response_model=ExpenseOut, status_code=201)
+@router.post("/", response_model=ExpenseOut, status_code=201,
+             dependencies=[Depends(require_api_key)])
 def create_expense(data: ExpenseCreate, db: Session = Depends(get_db)):
     expense = Expense(**data.model_dump())
     db.add(expense)
@@ -64,12 +66,11 @@ def create_expense(data: ExpenseCreate, db: Session = Depends(get_db)):
     return expense
 
 
-@router.delete("/{expense_id}", status_code=204)
+@router.delete("/{expense_id}", status_code=204,
+               dependencies=[Depends(require_api_key)])
 def delete_expense(expense_id: int, db: Session = Depends(get_db)):
     expense = db.query(Expense).filter(Expense.id == expense_id).first()
-
     if not expense:
         raise HTTPException(status_code=404, detail=f"Expense {expense_id} not found")
-
     db.delete(expense)
     db.commit()
