@@ -47,3 +47,26 @@ class ExpenseOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+# ── Note schemas ──────────────────────────────────────────────
+
+class NoteCreate(BaseModel):
+    title:   str = Field(..., example="API Design Tips")
+    content: str = Field(..., example="Always version your API from day one.")
+    tag:     Optional[str] = Field(None, example="idea")
+
+
+class NoteUpdate(BaseModel):
+    title:   Optional[str] = None
+    content: Optional[str] = None
+    tag:     Optional[str] = None
+
+
+class NoteOut(BaseModel):
+    id:      int
+    title:   str
+    content: str
+    tag:     Optional[str]
+
+    class Config:
+        from_attributes = True

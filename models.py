@@ -22,5 +22,16 @@ class Expense(Base):
     amount      = Column(Float, nullable=False)
     category    = Column(String(50), nullable=False)
     description = Column(String(200), nullable=True)
-    date        = Column(String(10), nullable=False)   # format: YYYY-MM-DD
+    date        = Column(String(10), nullable=False)
     created_at  = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Note(Base):
+    __tablename__ = "notes"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    title      = Column(String(200), nullable=False)
+    content    = Column(Text, nullable=False)
+    tag        = Column(String(50), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
